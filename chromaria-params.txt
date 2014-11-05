@@ -35,6 +35,7 @@ Morphology: <magenta-morphology-cppn.xml>
 Name of folder containing run logs and morphologies: <logs>
 Max parent list size: 100
 Max number of genomes generated: 50000
+Minimum creature size: 50 pixels
 
 
 ----<<< REPLAY OPTIONS >>>----

@@ -68,6 +68,25 @@ namespace Chromaria
             return pixels;
         }
 
+        /// <summary>
+        /// Counts the number of nontransparent (alpha > 0) pixels in the Image's Texture. 
+        /// </summary>
+        /// <returns>The number of nontransparent pixels in the Image's texture.</returns>
+        public int countNontransparentPixels()
+        {
+            int numNonTransparentPixels = 0;
+
+            // Loop through each pixel in the color array (initialized in the Image constructor) to 
+            // find the pixels with nonzero alpha values
+            foreach (Color pixel in TextureAsColorArray)
+            {
+                if (pixel.A != 0)
+                    numNonTransparentPixels++;
+            }
+
+            return numNonTransparentPixels;
+        }
+
         public virtual RotationPacket getRotationPacket() { return null; }
         public virtual RotationPacket getRotationPacketWithoutSensors(bool includeRotatedPixels) { return null; }
     }
