@@ -1,0 +1,38 @@
+----<<< questions? email lsoros@cs.ucf.edu >>>----
+
+1. Install the .NET 4.0 framework from http://www.microsoft.com/en-us/download/details.aspx?id=17851
+
+2. Install Mono using the Windows Installer (includes GTK# and other dependencies) from http://www.mono-project.com/download/#download-win
+
+3. Download the NuGet command-line utility from http://nuget.org/nuget.exe
+
+4. Use NuGet to install the binaries for MonoGame:
+	- Open a command line terminal
+	- Navigate to the directory containing nuget.exe
+	- Type 'nuget install MonoGame.Binaries -Version 3.2.0'
+	- Wait for the installer to finish - it may look like it isn't doing anything for a minute
+
+There will now be a new folder called MonoGame.Binaries.3.2.0 in the same folder as nuget.exe
+
+5. Copy the contents of MonoGame.Binaries.3.2.0/build/net40 into the Chromaria project's lib folder (create this folder first if it does not already exist)
+
+6. Open up Chromaria.sln using a C# IDE (I used Xamarin Studio, MonoDevelop and Visual Studio are also fine) and build the project
+
+7. Copy the following files into the Debug folder:
+	- blue-controller-cppn.xml*
+	- blue-morphology-cppn.xml*
+	- magenta-controller-cppn.xml*
+	- magenta-morphology-cppn.xml*
+	- chromaria-params.txt**
+		* found in chromaria/cppns
+		**  found in the main chromaria folder
+
+8. Run the simulation, pressing 'o' to start.
+
+Here are the implemented keyboard commands:
+ p = pause
+ o = unpause
+ u = disable graphics
+ I = re-enable graphics
+
+		
