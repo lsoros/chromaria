@@ -291,12 +291,46 @@ namespace Chromaria
             base.Update(gameTime);
             if (!paused)
             {
-                // There are 3 stopping conditions:
+                // First, if this is a new creature, check to make sure it meets the minimum size requirement. 
+                // (Creatures that don't meet the minimum size requirement should be removed immediately so as
+                // to not waste simulation time.)
+                if (numUpdates == 0 && (currentCreature.countNontransparentPixels() < minCreatureSize))
+                {
+                    // Write to the external log
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(logsFolder + "RunInfo.txt", true))
+                        file.WriteLine(DateTime.Now.ToString("0:MM/dd/yy H:mm:ss tt") + " : creature " + currentCreature.ID + " did not meet the minimum size requirement.");
+
+                    // Also remove its body from the world
+                    Components.RemoveAt(indexOfCurrentCreature);
+
+                    // Reset the simulator state and load the next creature into the world
+                    currentParentIndex++;
+                    if (currentParentIndex > (parentList.Count - 1))
+                        currentParentIndex = 0;
+                    currentCreature = generateCreatureFrom((NNControlledCreature)Components[parentList[currentParentIndex]]);
+                    currentCreature.Genome.ControllerCPPNGenome.Behavior = new BehaviorType();
+                    currentCreature.Genome.ControllerCPPNGenome.Behavior.behaviorList = new List<double>();
+
+                    // Add the creature to the appropriate regions
+                    int x = (int)currentCreature.Position.X;
+                    int y = (int)currentCreature.Position.Y;
+
+                    regions[y / regionHeight, x / regionWidth].Add(indexOfCurrentCreature);
+                    if ((x % regionWidth > (x + initialMorphology.Width) % regionWidth) && (y % regionHeight > (y + initialMorphology.Height) % regionHeight) && !regions[(y + initialMorphology.Height) / regionHeight, (x + initialMorphology.Width) / regionWidth].Contains(indexOfCurrentCreature))
+                        regions[(y + initialMorphology.Height) / regionHeight, (x + initialMorphology.Width) / regionWidth].Add(indexOfCurrentCreature);
+                    if (x % regionWidth > (x + initialMorphology.Width) % regionWidth && !regions[(y / regionHeight), (x + initialMorphology.Width) / regionWidth].Contains(indexOfCurrentCreature))
+                        regions[(y / regionHeight), (x + initialMorphology.Width) / regionWidth].Add(indexOfCurrentCreature);
+                    if (y % regionHeight > (y + initialMorphology.Height) % regionHeight && !regions[(y + initialMorphology.Height) / regionHeight, x / regionWidth].Contains(indexOfCurrentCreature))
+                        regions[(y + initialMorphology.Height) / regionHeight, x / regionWidth].Add(indexOfCurrentCreature);
+                    return;
+                }
+
+                // There are 3 other stopping conditions:
                 // 1) successful planting attempt
                 // 2) unsuccessful planting attempt
                 // 3) timeout
                 // Either way, we need to generate a new offspring to evaluate.
-                if (currentCreature.currentState.Equals(State.Planting) && currentCreature.isAtValidPlantingLocation())
+                else if (currentCreature.currentState.Equals(State.Planting) && currentCreature.isAtValidPlantingLocation())
                 {
                     // If such a planting attempt occurred and was successful, the Chromarian generates an offspring.
                     if (currentCreature.isAtValidPlantingLocation())
@@ -307,9 +341,9 @@ namespace Chromaria
                         // Get ready for the background to update
                         updateBackground = true;
                         planterRotationPacket = currentCreature.getRotationPacketWithoutSensors(true);
-                        
+
                         backgroundImage.Update(gameTime);
-                        
+
                         using (System.IO.StreamWriter file = new System.IO.StreamWriter(logsFolder + "RunInfo.txt", true))
                         {
                             file.WriteLine(DateTime.Now.ToString("0:MM/dd/yy H:mm:ss tt") + " : creature " + currentCreature.ID + " planted successfully");
@@ -318,7 +352,7 @@ namespace Chromaria
                         // Add the current (successful) creature to the population list PRECEDING its parent
                         if (parentList[currentParentIndex] != indexOfCurrentCreature)
                             parentList.Insert(currentParentIndex, indexOfCurrentCreature); // TEST THIS
-                        currentParentIndex+=2;
+                        currentParentIndex += 2;
                         if (currentParentIndex > (parentList.Count - 1))
                             currentParentIndex = 0;
 
@@ -389,7 +423,7 @@ namespace Chromaria
                     }
                 }
 
-                // Otherwise (if an unsuccessful planting attempt occurred), it does not get added to the list
+                // Otherwise (if an unsuccessful planting attempt occurred), it does not get added to the list.
                 else if (currentCreature.currentState.Equals(State.Planting))
                 {
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(logsFolder + "RunInfo.txt", true))
@@ -399,7 +433,6 @@ namespace Chromaria
 
                     // Also remove its body from the world
                     Components.RemoveAt(indexOfCurrentCreature);
-                
 
                     // Reset the simulator state and load the next creature into the world
                     numUpdates = 0;

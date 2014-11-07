@@ -47,14 +47,14 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Creature.cs" />
+    <Compile Include="VisibleComponents\Creature.cs" />
     <Compile Include="DemoFromXML.cs" />
     <Compile Include="MainLoop.cs" />
     <Compile Include="ManualRun.cs" />
     <Compile Include="NoveltySearch.cs" />
-    <Compile Include="RotateableImage.cs" />
-    <Compile Include="Image.cs" />
-    <Compile Include="NNControlledCreature.cs" />
+    <Compile Include="VisibleComponents\RotateableImage.cs" />
+    <Compile Include="VisibleComponents\Image.cs" />
+    <Compile Include="VisibleComponents\NNControlledCreature.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MathHelpers.cs" />
@@ -198,8 +198,8 @@
     <Compile Include="SharpNeatLib\Xml\XmlException.cs" />
     <Compile Include="SharpNeatLib\Xml\XmlUtilities.cs" />
     <Compile Include="Simulator.cs" />
-    <Compile Include="StaticImage.cs" />
-    <Compile Include="UserControlledCreature.cs" />
+    <Compile Include="VisibleComponents\StaticImage.cs" />
+    <Compile Include="VisibleComponents\UserControlledCreature.cs" />
     <Compile Include="VectorHelpers.cs" />
   </ItemGroup>
   <ItemGroup>

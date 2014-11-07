@@ -124,6 +124,7 @@ namespace Chromaria
         public static int defaultNumSensors = 10; // the number of sensors per dimension. (ex. if defaultNumSensors is 10, the sensor field will contain 100 active sensors)
         public static double toleratedDifference; // max. matching score is 8.0; see Creature.isAtValidPlantingLocation()
         public static int pixelHeight;
+        public static int minCreatureSize;
         #endregion
 
         #region instance variables
@@ -332,6 +333,11 @@ namespace Chromaria
                                 {
                                     splitString = line.Split();
                                     maxNumGenomesGenerated = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                }
+                                else if (line.StartsWith("Minimum creature size:"))
+                                {
+                                    splitString = line.Split();
+                                    minCreatureSize = Convert.ToInt32(splitString[splitString.Length - 2]);
                                 }
                                 else if (line.StartsWith("Controller genome prefix:"))
                                 {
