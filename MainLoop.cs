@@ -37,7 +37,8 @@ namespace Chromaria
         int indexOfDequeuedCreature;
         EvolutionAlgorithm controllerEA;
         EvolutionAlgorithm morphologyEA;
-        NeatParameters neatParams;
+        NeatParameters controllerEAparams;
+        NeatParameters morphologyEAparams;
         string logsFolderRoot;
 
         StaticImage backgroundImage;
@@ -61,8 +62,15 @@ namespace Chromaria
             controllerSubstrate.threshold = 0.2;
 
             // Configure the NEAT parameters
-            neatParams = new NeatParameters();
-            neatParams.notGenerational = true;
+            controllerEAparams = new NeatParameters();
+            controllerEAparams.notGenerational = true;
+            controllerEAparams.recurrenceDisabled = false;
+            controllerEAparams.actFunDictionary = Simulator.controllerCPPNactFuns;
+
+            morphologyEAparams = new NeatParameters();
+            morphologyEAparams.notGenerational = true;
+            morphologyEAparams.recurrenceDisabled = true;
+            morphologyEAparams.actFunDictionary = Simulator.morphologyCPPNactFuns;
 
             // Create the logs folder if it doesn't already exist
             logsFolderRoot = logsFolder;
@@ -190,8 +198,7 @@ namespace Chromaria
                     nextInnovationID = gene.InnovationId;
             }
             nextInnovationID++;
-            neatParams.recurrenceDisabled = false;
-            controllerEA = new EvolutionAlgorithm(null, null, neatParams, nextGenomeID, nextInnovationID);
+            controllerEA = new EvolutionAlgorithm(null, null, controllerEAparams, nextGenomeID, nextInnovationID);
 
             // Initialize the evolutionary algorithm (EA) for the morphologies
             // The EA here is only being used for lookup tables, etc.; we aren't maintaining a population or using generational evaluations
@@ -213,8 +220,7 @@ namespace Chromaria
                     nextInnovationID = gene.InnovationId;
             }
             nextInnovationID++;
-            neatParams.recurrenceDisabled = true;
-            morphologyEA = new EvolutionAlgorithm(null, null, neatParams, nextGenomeID, nextInnovationID);
+            morphologyEA = new EvolutionAlgorithm(null, null, morphologyEAparams, nextGenomeID, nextInnovationID);
 
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(logsFolder + "RunInfo.txt", true))
             {

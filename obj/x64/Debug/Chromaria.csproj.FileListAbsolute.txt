@@ -16,3 +16,14 @@ C:\Users\Lisa\Documents\chromaria\obj\x64\Debug\Chromaria.SharpNeatLib.Experimen
 C:\Users\Lisa\Documents\chromaria\obj\x64\Debug\Chromaria.csproj.GenerateResource.Cache
 C:\Users\Lisa\Documents\chromaria\obj\x64\Debug\Chromaria.exe
 C:\Users\Lisa\Documents\chromaria\obj\x64\Debug\Chromaria.pdb
+C:\Users\LSoros\Dropbox\Chromaria\source\bin\x64\Debug\Chromaria.exe
+C:\Users\LSoros\Dropbox\Chromaria\source\bin\x64\Debug\Chromaria.pdb
+C:\Users\LSoros\Dropbox\Chromaria\source\bin\x64\Debug\MonoGame.Framework.dll
+C:\Users\LSoros\Dropbox\Chromaria\source\bin\x64\Debug\OpenTK.dll
+C:\Users\LSoros\Dropbox\Chromaria\source\bin\x64\Debug\Lidgren.Network.dll
+C:\Users\LSoros\Dropbox\Chromaria\source\bin\x64\Debug\Tao.Sdl.dll
+C:\Users\LSoros\Dropbox\Chromaria\source\obj\x64\Debug\Chromaria.csprojResolveAssemblyReference.cache
+C:\Users\LSoros\Dropbox\Chromaria\source\obj\x64\Debug\Chromaria.SharpNeatLib.Experiments.AbstractExperimentView.resources
+C:\Users\LSoros\Dropbox\Chromaria\source\obj\x64\Debug\Chromaria.csproj.GenerateResource.Cache
+C:\Users\LSoros\Dropbox\Chromaria\source\obj\x64\Debug\Chromaria.exe
+C:\Users\LSoros\Dropbox\Chromaria\source\obj\x64\Debug\Chromaria.pdb

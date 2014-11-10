@@ -49,12 +49,7 @@ namespace Chromaria.SharpNeatLib.NeuralNetwork
 
         public static IActivationFunction GetRandomActivationFunction(Evolution.NeatParameters np)
         {
-            Dictionary<string, double> actFunDictionary = new Dictionary<string, double>(4);
-            actFunDictionary.Add("Linear", Chromaria.Simulator.pLinear);
-            actFunDictionary.Add("Gaussian", Chromaria.Simulator.pGaussian);
-            actFunDictionary.Add("BipolarSigmoid", Chromaria.Simulator.pBipolarSigmoid);
-            actFunDictionary.Add("Sine", Chromaria.Simulator.pSine);
-            ActivationFunctionFactory.setProbabilities(actFunDictionary);
+            ActivationFunctionFactory.setProbabilities(np.actFunDictionary);
             return functions[Maths.RouletteWheel.SingleThrow(probabilities)];
         }
 	}

@@ -57,10 +57,15 @@ Max time steps: 200
 
 
 ----<<< CPPN ACTIVATION FUNCTION SELECTION PROBABILITIES >>>----
+Controller CPPN:
 Linear: 25 %
 Gaussian: 25 %
 Bipolar sigmoid: 25 %
 Sine: 25 %
+
+Morphology CPPN:
+Modulus: 50 %
+Sine: 50 %
 
 
 ----<<< CREATURE OPTIONS >>>----
