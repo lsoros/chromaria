@@ -33,7 +33,7 @@ namespace Chromaria
                 {
                     while ((line = sr.ReadLine()) != null)
                     {
-                        if(line.StartsWith("-"))
+                        if(line.StartsWith("----<<< NOVELTY SEARCH >>>----"))
                             break;
 
                         if (line.StartsWith("[x]"))

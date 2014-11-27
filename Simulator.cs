@@ -137,6 +137,10 @@ namespace Chromaria
         public static float nextDepth;
         public static int nextImageID;
         public static StaticImage initialBackground;
+        public static SpriteFont defaultFont;
+        public static Vector2 textPosition;
+        public static long startTime;
+        public static string replayFolderName;
         #endregion 
 
         /// <summary>
@@ -325,7 +329,7 @@ namespace Chromaria
                                     subtoken = splitString[splitString.Length - 1];
                                     subtoken = subtoken.Remove(0, 1);
                                     subtoken = subtoken.Remove(subtoken.Length - 1);
-                                    logsFolder = Directory.GetCurrentDirectory() + "\\" + subtoken + "\\";
+                                    replayFolderName = subtoken;
                                 }
                                 else if (line.StartsWith("Max parent list size:"))
                                 {
@@ -566,6 +570,9 @@ namespace Chromaria
         /// </summary>
         protected override void Initialize()
         {
+            // Get the (unique) start time
+            startTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
             // Initialize simulator
             base.Initialize();
 
@@ -574,6 +581,12 @@ namespace Chromaria
 
             // Set the title of the window
             Window.Title = "Chromaria";
+
+            // Load the pre-compiled font that can be used for on-screen displays
+            defaultFont = Content.Load<SpriteFont>("Vera");
+
+            // Set the on-screen position for drawing the reproduction number
+            textPosition = new Vector2(50, 25);
 
             // Create a new SpriteBatch, which can be used to render textures onscreen
             spriteBatch = new SpriteBatch(GraphicsDevice);

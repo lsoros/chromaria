@@ -1,0 +1,9 @@
+Novelty search run
+Start time: 18:57:22 PM
+Individuals are immobilized once they attempt to plant.
+Morphology genome XML filename: magenta-controller-cppn.xml
+Behavior update interval: 5
+Planting weight: 1
+Position weight: 1
+Population size: 100
+Archive threshold: 50

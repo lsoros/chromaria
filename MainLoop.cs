@@ -40,7 +40,6 @@ namespace Chromaria
         NeatParameters controllerEAparams;
         NeatParameters morphologyEAparams;
         string logsFolderRoot;
-
         StaticImage backgroundImage;
         #endregion
 
@@ -73,13 +72,19 @@ namespace Chromaria
             morphologyEAparams.actFunDictionary = Simulator.morphologyCPPNactFuns;
 
             // Create the logs folder if it doesn't already exist
-            logsFolderRoot = logsFolder;
             if (!replayRun)
+            {
+                logsFolderRoot = Directory.GetCurrentDirectory() + "\\" + "logs-" + startTime.ToString() + "\\";
                 logsFolder = logsFolderRoot + "0\\";
+                if (!Directory.Exists(logsFolder))
+                    Directory.CreateDirectory(logsFolder);
+            }
             else
+            {
+                logsFolderRoot = Directory.GetCurrentDirectory() + "\\" + replayFolderName + "\\";
                 logsFolder = logsFolderRoot + snapshotFolderNumber.ToString() + "\\";
-            if (!Directory.Exists(logsFolder))
-                Directory.CreateDirectory(logsFolder);
+            }
+            
 
             if (!replayRun)
                 snapshotFolderNumber = 0;
@@ -604,7 +609,16 @@ namespace Chromaria
 
         protected override void Draw(GameTime gameTime)
         {
+            // Draw the main simulator components to the screen
             base.Draw(gameTime);
+
+            // Draw the reproduction number to the screen
+            if (graphicsEnabled)
+            {
+                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+                spriteBatch.DrawString(defaultFont, currentCreature.ID.ToString(), textPosition, Color.Black);
+                spriteBatch.End();
+            }
         }
 
         private void WriteListsToFiles(int offspringID)
