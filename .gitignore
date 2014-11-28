@@ -1,3 +1,6 @@
 lib/MonoGame.Binaries.targets
 Chromaria.userprefs
 obj/
+build/Chromaria.pdb
+build/Chromaria.vshost.exe
+build/Chromaria.vshost.exe.manifest
