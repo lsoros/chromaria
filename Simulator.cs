@@ -255,7 +255,7 @@ namespace Chromaria
                                         {
                                             subtoken = token.Remove(0, 1);
                                             subtoken = subtoken.Remove(subtoken.Length-1);
-                                            initialControllerFilename = subtoken;
+                                            initialControllerFilename = Path.Combine("Genomes",subtoken);
                                         }
                                     }
                                 }
@@ -267,7 +267,7 @@ namespace Chromaria
                                         {
                                             subtoken = token.Remove(0, 1);
                                             subtoken = subtoken.Remove(subtoken.Length - 1);
-                                            initialMorphologyFilename = subtoken;
+                                            initialMorphologyFilename = Path.Combine("Genomes",subtoken);
                                         }
                                     }
                                 }
