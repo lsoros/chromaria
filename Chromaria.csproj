@@ -236,7 +236,9 @@
     </Content>
     <Content Include="Icon.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Content\Vera.xnb" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SharpNeatLib\Experiments\AbstractExperimentView.resx">
       <DependentUpon>AbstractExperimentView.cs</DependentUpon>
