@@ -27,3 +27,5 @@ C:\Users\LSoros\Dropbox\Chromaria\source\obj\x64\Debug\Chromaria.SharpNeatLib.Ex
 C:\Users\LSoros\Dropbox\Chromaria\source\obj\x64\Debug\Chromaria.csproj.GenerateResource.Cache
 C:\Users\LSoros\Dropbox\Chromaria\source\obj\x64\Debug\Chromaria.exe
 C:\Users\LSoros\Dropbox\Chromaria\source\obj\x64\Debug\Chromaria.pdb
+C:\Users\Lisa\Dropbox\Chromaria\source\obj\x64\Debug\Chromaria.exe
+C:\Users\Lisa\Dropbox\Chromaria\source\obj\x64\Debug\Chromaria.pdb

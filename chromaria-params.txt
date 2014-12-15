@@ -64,8 +64,10 @@ Bipolar sigmoid: 25 %
 Sine: 25 %
 
 Morphology CPPN:
-Modulus: 50 %
-Sine: 50 %
+Linear: 25 %
+Gaussian: 25 %
+Bipolar sigmoid: 25 %
+Sine: 25 %
 
 
 ----<<< CREATURE OPTIONS >>>----

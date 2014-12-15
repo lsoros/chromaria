@@ -132,9 +132,6 @@ namespace Chromaria
                         // Find the (local) coordinates of the pixel after rotation based on the original texture's size
                         unrotatedPoint = MathHelpers.UnRotateAroundPoint(rotatedX, rotatedY, textureCenter.X, textureCenter.Y, XNAHeading);
 
-                        if (rotatedX == 25 && rotatedY == 75)
-                            Console.Write("hi");
-
                         // Convert the rotatedpoint into the corresponding index into the rotated pixel array (accounting for the size difference)
                         if (unrotatedPoint.X > -1 && unrotatedPoint.X < Texture.Width && unrotatedPoint.Y > -1 && unrotatedPoint.Y < Texture.Height)
                         {
