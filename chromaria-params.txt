@@ -2,7 +2,6 @@
 [ ] New novelty search
 [x] New evolution run 
 [ ] Replay existing run
-[ ] Analyze existing run
 [ ] Replay one individual
 [ ] Debug mode (keyboard control)
 
@@ -46,7 +45,6 @@ Snapshot folder number: 199
 [x] Background generated based on seed morphology
 [ ] Grey striped background
 
-[x] Fixed size world
 Initial world height: 1000 pixels
 Initial world width: 1000 pixels
 
@@ -94,13 +92,10 @@ Prob. mutate add connection: 0.02
 Prob. mutate delete connection: 0.001
 
 
-----<<< VISUALIZATION OPTIONS >>>----
+----<<< DEBUG MODE OPTIONS >>>----
 ( do not use the red overlay in replay mode or evolution mode )
 [ ] Overlay a red circle on a creature when it is planting
 [ ] Draw the sensor field and its contents onscreen
-
-
-----<<< DEBUG MODE OPTIONS >>>----
 [ ] Dummy morphology with a uniformly distributed color pattern
 [ ] Include overlapping dummy creatures in background (for sensor testing)
 [ ] Print out the sensor inputs and ANN outputs at each timestep to <sensor_contents.txt>
