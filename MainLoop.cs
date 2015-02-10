@@ -55,21 +55,33 @@ namespace Chromaria
         {
             base.Initialize();
 
-            // Configure the HyperNEAT substrate
-            controllerSubstrate = new ControllerSubstrate(308, 4, 108, new BipolarSigmoid());
-            controllerSubstrate.weightRange = 5.0;
-            controllerSubstrate.threshold = 0.2;
+			// Configure the HyperNEAT substrate
+			controllerSubstrate = new ControllerSubstrate(308, 4, 108, new BipolarSigmoid());
+			controllerSubstrate.weightRange = 5.0;
+			controllerSubstrate.threshold = 0.2;
 
-            // Configure the NEAT parameters
-            controllerEAparams = new NeatParameters();
-            controllerEAparams.notGenerational = true;
-            controllerEAparams.recurrenceDisabled = false;
-            controllerEAparams.actFunDictionary = Simulator.controllerCPPNactFuns;
+			// Configure the NEAT parameters
+			controllerEAparams = new NeatParameters();
+			controllerEAparams.notGenerational = true;
+			controllerEAparams.recurrenceDisabled = false;
+			controllerEAparams.actFunDictionary = Simulator.controllerCPPNactFuns;
+			controllerEAparams.pMutateConnectionWeights = Simulator.pMutConnectionWeight;
+			controllerEAparams.pMutateAddNode = Simulator.pAddNode;
+			controllerEAparams.pMutateDeleteSimpleNeuron = Simulator.pDeleteSimpleNeuron;
+			controllerEAparams.pMutateAddModule = Simulator.pAddModule;
+			controllerEAparams.pMutateAddConnection = Simulator.pAddConnection;
+			controllerEAparams.pMutateDeleteConnection = Simulator.pDeleteConnection;
 
-            morphologyEAparams = new NeatParameters();
-            morphologyEAparams.notGenerational = true;
-            morphologyEAparams.recurrenceDisabled = true;
-            morphologyEAparams.actFunDictionary = Simulator.morphologyCPPNactFuns;
+			morphologyEAparams = new NeatParameters();
+			morphologyEAparams.notGenerational = true;
+			morphologyEAparams.recurrenceDisabled = true;
+			morphologyEAparams.actFunDictionary = Simulator.morphologyCPPNactFuns;
+			morphologyEAparams.pMutateConnectionWeights = Simulator.pMutConnectionWeight;
+			morphologyEAparams.pMutateAddNode = Simulator.pAddNode;
+			morphologyEAparams.pMutateDeleteSimpleNeuron = Simulator.pDeleteSimpleNeuron;
+			morphologyEAparams.pMutateAddModule = Simulator.pAddModule;
+			morphologyEAparams.pMutateAddConnection = Simulator.pAddConnection;
+			morphologyEAparams.pMutateDeleteConnection = Simulator.pDeleteConnection;
 
             // Create the logs folder if it doesn't already exist
             if (!replayRun)
@@ -558,13 +570,19 @@ namespace Chromaria
             offspring.InitializeSensor();
             indexOfCurrentCreature = Components.Count - 1;
 
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(logsFolder + "RunInfo.txt", true))
-            {
-                file.WriteLine(DateTime.Now.ToString("0:MM/dd/yy H:mm:ss tt") + " : creature " + parent.ID + " generated offspring " + offspring.ID);
-            }
-
             if (!replayRun)
             {
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(logsFolder + "RunInfo.txt", true))
+                {
+                    file.WriteLine(DateTime.Now.ToString("0:MM/dd/yy H:mm:ss tt") + " : creature " + parent.ID + " generated offspring " + offspring.ID);
+                }
+
+                // Rewrite the ancestry info to a separate file
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(logsFolder + "Ancestry.txt", true))
+                {
+                    file.WriteLine(offspring.ID + " " + parent.ID);
+                }
+
                 // Write the new morphology genome to the log folder
                 XmlDocument morphologyGenomeXML = new XmlDocument();
                 XmlDeclaration declaration = morphologyGenomeXML.CreateXmlDeclaration("1.0", null, null);

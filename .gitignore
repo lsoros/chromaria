@@ -6,3 +6,5 @@ build/Chromaria.vshost.exe.manifest
 
 
 obj/x64/Debug/Chromaria.exe
+*.resources
+obj/x64/Debug/Chromaria.csproj.FileListAbsolute.txt

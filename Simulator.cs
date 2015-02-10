@@ -104,6 +104,12 @@ namespace Chromaria
         public static string logsFolder;
         public static string snapshotFileName;
         public static int snapshotFolderNumber;
+		public static double pMutConnectionWeight;
+		public static double pAddNode;
+		public static double pDeleteSimpleNeuron;
+		public static double pAddModule;
+		public static double pAddConnection;
+		public static double pDeleteConnection;
 
         public static int maxPopulationListSize;
         public static int maxTimeSteps; //was 150
@@ -550,6 +556,36 @@ namespace Chromaria
                                     splitString = line.Split();
                                     snapshotFolderNumber = Convert.ToInt32(splitString[splitString.Length - 1]);
                                 }
+								else if (line.StartsWith("Prob. mutate connection weights:"))
+								{
+									splitString = line.Split();
+									pMutConnectionWeight = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
+								else if (line.StartsWith("Prob. mutate add node:"))
+								{
+									splitString = line.Split();
+									pAddNode = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
+								else if (line.StartsWith("Prob. mutate delete node:"))
+								{
+									splitString = line.Split();
+									pDeleteSimpleNeuron = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
+								else if (line.StartsWith("Prob. mutate add module:"))
+								{
+									splitString = line.Split();
+									pAddModule = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
+								else if (line.StartsWith("Prob. mutate add connection:"))
+								{
+									splitString = line.Split();
+									pAddConnection = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
+								else if (line.StartsWith("Prob. mutate delete connection:"))
+								{
+									splitString = line.Split();
+									pDeleteConnection = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
                             }
                         }
                     }
