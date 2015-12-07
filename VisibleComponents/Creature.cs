@@ -680,7 +680,7 @@ namespace Chromaria
             summedDifferences += Math.Abs(cyanRatioSensor - cyanRatio);
 
             // Then, if the summed difference does not exceed our tolerated difference, planting succeeds.
-            return (summedDifferences <= Chromaria.Simulator.toleratedDifference);
+			return (summedDifferences <= Chromaria.Simulator.plantingThresholdUpper && summedDifferences >= Chromaria.Simulator.plantingThresholdLower);
 
         }
 

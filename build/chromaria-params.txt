@@ -73,7 +73,8 @@ Required distance from center (this number * max body height): 1.45
 Initial heading (range [-3.14, 3.14]; 0 points north): 0 radians
 Rotation speed: 1 degree(s)
 Movement speed: 300
-Tolerated difference between sensor field contents / body color ratios for planting: 1.0 
+Planting threshold lower bound: 0
+Planting threshold upper bound: 2
 Texture width (use odd values): 101 pixels 
 
 
@@ -90,7 +91,7 @@ Prob. mutate add node: 0.002
 Prob. mutate delete node: 0.002
 Prob. mutate add module: 0.0
 Prob. mutate add connection: 0.02
-Prob. mutate delete connection: 0.02
+Prob. mutate delete connection: 0.00
 
 
 ----<<< DEBUG MODE OPTIONS >>>----
