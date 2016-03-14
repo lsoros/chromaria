@@ -9,6 +9,7 @@ namespace Chromaria.SharpNeatLib.NeatGenome
 {
     public class CombinedGenome
     {
+        public int fileNumber { get; set; }
         public NeatGenome MorphologyCPPNGenome { get; set; }
         public NeatGenome ControllerCPPNGenome { get; set; }
 

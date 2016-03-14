@@ -39,10 +39,11 @@ namespace Chromaria.SharpNeatLib.NeatGenome.Xml
 		    //----- Write beahavior
 		    if(genome.Behavior!=null)
 		    {
+                XmlElement xmlBehavior = XmlUtilities.AddElement(xmlGenome, "behavior");
 		        if(genome.Behavior.behaviorList!=null)
 		        {
-		            XmlElement xmlBehavior = XmlUtilities.AddElement(xmlGenome, "behavior");
-		            WriteBehavior(xmlBehavior,genome.objectives,genome.Behavior);        
+                    XmlElement xmlBehaviorList = XmlUtilities.AddElement(xmlBehavior, "list");
+                    WriteBehavior(xmlBehaviorList, genome.objectives, genome.Behavior);        
 		        }
 		    }
 		}
@@ -77,10 +78,11 @@ namespace Chromaria.SharpNeatLib.NeatGenome.Xml
 		    //----- Write beahavior
 		    if(genome.Behavior!=null)
 		    {
+                XmlElement xmlBehavior = XmlUtilities.AddElement(xmlGenome, "behavior");
 		        if(genome.Behavior.behaviorList!=null)
 		        {
-		            XmlElement xmlBehavior = XmlUtilities.AddElement(xmlGenome, "behavior");
-		            WriteBehavior(xmlBehavior,genome.objectives,genome.Behavior);        
+                    XmlElement xmlBehaviorList = XmlUtilities.AddElement(xmlBehavior, "list");
+		            WriteBehavior(xmlBehaviorList, genome.objectives, genome.Behavior);        
 		        }
 		    }
 
@@ -96,11 +98,7 @@ namespace Chromaria.SharpNeatLib.NeatGenome.Xml
                 outstring += behavior.behaviorList[i].ToString() + ",";   
             }
 
-			/*if(obj!=null) {
-			 for(int i=0;i<obj.Length;i++)
-				outstring+=" O"+i+":"+obj[i];
-			}*/
-            XmlUtilities.AddAttribute(xmlBehavior,"list",outstring);
+            XmlUtilities.AddAttribute(xmlBehavior,"vals",outstring);
         }
 
 		private static void WriteNeuron(XmlElement xmlNeurons, NeuronGene neuronGene)
