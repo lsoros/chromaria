@@ -24,6 +24,7 @@ namespace Chromaria
             bool noveltySearch = false;
             bool manualMode = false; // Allows you to control a creature with the keyboard
             bool demoFromXML = false; // Loads one genome from XML and runs it repeatedly
+            bool generateStats = false; // Outputs color stats for visualization
 
             // Read run mode in from params file
             try
@@ -33,19 +34,21 @@ namespace Chromaria
                 {
                     while ((line = sr.ReadLine()) != null)
                     {
-                        if(line.StartsWith("----<<< NOVELTY SEARCH >>>----"))
+                        if (line.StartsWith("----<<< NOVELTY SEARCH >>>----"))
                             break;
 
                         if (line.StartsWith("[x]"))
                         {
                             if (line.Contains("Replay existing run"))
                                 Simulator.replayRun = true;
-                            else if (line.Contains("Replay one individual"))
+                            else if (line.Contains("Demo individual"))
                                 demoFromXML = true;
                             else if (line.Contains("New novelty search"))
                                 noveltySearch = true;
                             else if (line.Contains("Debug mode"))
                                 manualMode = true;
+                            else if (line.Contains("Generate stats for visualization"))
+                                generateStats = true;
                         }
                     }
                 }
@@ -63,6 +66,8 @@ namespace Chromaria
                 using (ManualRun sim = new ManualRun()) { sim.Run(); }
             else if (demoFromXML)
                 using (DemoFromXML sim = new DemoFromXML()) { sim.Run(); }
+            else if(generateStats)
+                using (GenerateStats sim = new GenerateStats()) { sim.Run(); }
             else
                 using (MainLoop sim = new MainLoop()) { sim.Run(); }
         }

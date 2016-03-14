@@ -47,14 +47,15 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="VisibleComponents\Creature.cs" />
+    <Compile Include="Creature.cs" />
     <Compile Include="DemoFromXML.cs" />
+    <Compile Include="GenerateStats.cs" />
     <Compile Include="MainLoop.cs" />
     <Compile Include="ManualRun.cs" />
     <Compile Include="NoveltySearch.cs" />
-    <Compile Include="VisibleComponents\RotateableImage.cs" />
-    <Compile Include="VisibleComponents\Image.cs" />
-    <Compile Include="VisibleComponents\NNControlledCreature.cs" />
+    <Compile Include="RotateableImage.cs" />
+    <Compile Include="Image.cs" />
+    <Compile Include="NNControlledCreature.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MathHelpers.cs" />
@@ -198,15 +199,15 @@
     <Compile Include="SharpNeatLib\Xml\XmlException.cs" />
     <Compile Include="SharpNeatLib\Xml\XmlUtilities.cs" />
     <Compile Include="Simulator.cs" />
-    <Compile Include="VisibleComponents\StaticImage.cs" />
-    <Compile Include="VisibleComponents\UserControlledCreature.cs" />
+    <Compile Include="StaticImage.cs" />
+    <Compile Include="UserControlledCreature.cs" />
     <Compile Include="VectorHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MonoGame.Framework, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\MonoGame.Framework.dll</HintPath>
+      <HintPath>.\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System.Data" />
@@ -222,21 +223,20 @@
     <Content Include="chromaria-params.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Genomes\blue-controller-cppn.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Genomes\blue-morphology-cppn.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Genomes\magenta-controller-cppn.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Genomes\magenta-morphology-cppn.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Icon.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="initialbackground.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="magenta-controller-cppn.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="magenta-morphology-cppn.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="widebackground.dat" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SharpNeatLib\Experiments\AbstractExperimentView.resx">
       <DependentUpon>AbstractExperimentView.cs</DependentUpon>

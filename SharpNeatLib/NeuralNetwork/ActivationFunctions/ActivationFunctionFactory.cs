@@ -49,8 +49,8 @@ namespace Chromaria.SharpNeatLib.NeuralNetwork
 
         public static IActivationFunction GetRandomActivationFunction(Evolution.NeatParameters np)
         {
-            ActivationFunctionFactory.setProbabilities(np.actFunDictionary);
-            return functions[Maths.RouletteWheel.SingleThrow(probabilities)];
+			ActivationFunctionFactory.setProbabilities(np.actFunDictionary);
+			return functions[Maths.RouletteWheel.SingleThrow(probabilities)];
         }
 	}
 }

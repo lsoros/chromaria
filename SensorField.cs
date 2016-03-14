@@ -177,6 +177,11 @@ namespace Chromaria
                 intersectingImages = new List<Image>();
                 intersectingImages.Add(Simulator.initialBackground);
             }
+            else if (Simulator.everyoneCanPlant)
+            {
+                intersectingImages = new List<Image>();
+                intersectingImages.Add(Simulator.backgroundImage);
+            }
             else
                 intersectingImages = updateIntersectingImages(creature, creaturePacket);
 

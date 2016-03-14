@@ -59,12 +59,36 @@ namespace Chromaria.SharpNeatLib.NeatGenome.Xml
 			XmlNodeList listConnectionGenes = xmlGenome.SelectNodes("connections/connection");
 			foreach(XmlElement xmlConnectionGene in listConnectionGenes)
 				connectionGeneList.Add(ReadConnectionGene(xmlConnectionGene));
-			
-			//return new NeatGenome(id, neuronGeneList, connectionGeneList, inputNeuronCount, outputNeuronCount);
+
+            
+            // Read behavior list
             NeatGenome g = new NeatGenome(id, neuronGeneList, moduleGeneList, connectionGeneList, inputNeuronCount, outputNeuronCount);
-            g.Behavior = ReadBehavior(xmlGenome.SelectSingleNode("list"));
-            g.Behavior.objectives = new double[6];
-            g.objectives = new double[6];
+
+            XmlNode behaviorNode = xmlGenome.SelectSingleNode("behavior");
+            if (behaviorNode != null)
+            {
+                g.Behavior = ReadBehavior(behaviorNode); //TODO bug is here
+                g.Behavior.objectives = new double[6];
+                g.objectives = new double[6];
+            }
+
+
+
+
+            /*
+            XmlNode behaviorNode = xmlGenome.SelectSingleNode("behavior");
+            if (behaviorNode != null)
+            {
+                g.Behavior = ReadBehavior(behaviorNode.SelectSingleNode("list")); //TODO bug is here
+                g.Behavior.objectives = new double[6];
+                g.objectives = new double[6];
+            }
+             */ 
+            
+
+
+
+
             return g;
 		}
 
@@ -116,11 +140,25 @@ namespace Chromaria.SharpNeatLib.NeatGenome.Xml
             BehaviorType b = new BehaviorType();
             foreach (string str in s)
             {
-                if(str!="")
+                if (str != "")
                     l.Add(double.Parse(str));
             }
             b.behaviorList = l;
             return b;
+
+            /*
+            if (xmlBehavior == null)
+                return new BehaviorType();
+            List<double> l = new List<double>();
+            string[] s = XmlUtilities.GetAttributeValue(xmlBehavior, "vals").Split(new char[] { ',' });
+            BehaviorType b = new BehaviorType();
+            foreach (string str in s)
+            {
+                if(str!="")
+                    l.Add(double.Parse(str));
+            }
+            b.behaviorList = l;
+            return b;*/
         }
 	}
 }

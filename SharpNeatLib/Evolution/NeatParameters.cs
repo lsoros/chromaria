@@ -73,7 +73,7 @@ namespace Chromaria.SharpNeatLib.Evolution
         public bool recurrenceDisabled = true; // Note: BUGS HERE IF YOU ARE ALLOWING MODULAR NETWORKS (does not pass the layer input to the NeuronGene constructor)
 	
         public List<int> histogramBins;
-        public Dictionary<string, double> actFunDictionary;
+		public Dictionary<string, double> actFunDictionary;
         
 		public int populationSize;
 		public float pInitialPopulationInterconnections;
@@ -210,7 +210,7 @@ namespace Chromaria.SharpNeatLib.Evolution
 
 			connectionWeightRange = DEFAULT_CONNECTION_WEIGHT_RANGE;
 
-            Dictionary<string, double> actFunDictionary = new Dictionary<string, double>(15); // Add values in the MainLoop class
+			Dictionary<string, double> actFunDictionary = new Dictionary<string, double>(15); // Add values in the MainLoop class
 		}
 
 		/// <summary>

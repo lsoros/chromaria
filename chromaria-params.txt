@@ -1,10 +1,9 @@
 ----<<< RUN MODE >>>----
 [ ] New novelty search
-[x] New evolution run 
-[ ] Replay existing run
-[ ] Analyze existing run
-[ ] Replay one individual
-[ ] Debug mode (keyboard control)
+[ ] New evolution run 
+[x] Replay existing run 
+[ ] Generate stats for visualization
+[ ] Demo individual
 
 
 ----<<< NOVELTY SEARCH >>>----
@@ -12,45 +11,43 @@
 [x] Freeze individuals after they attempt to plant
 [ ] Stop novelty search after <10000> individuals have been evaluated
 
+
+----<<< MAIN LOOP OPTIONS >>>----
+[ ] Control 1: everyone gets to reproduce
+[ ] Control 2: creatures can't see each other
+
+Name of folder containing run logs and morphologies: <test>
+Max parent list size: 100
+Number of allowed attempts to generate a viable offspring: 3
+Max number of genomes generated: 350000
+Minimum creature size: 50 pixels
+
 Behavior vector update interval: 5 ticks
 Population size: 100
 Archive threshold: 50.0
 
 
-----<<< BEHAVIOR VECTOR WEIGHTS >>>----
-Planting: 1.0
-Position: 1.0
-Heading: 1.0
+----<<< REPLAY OPTIONS >>>----
+[ ] load static background only
+Snapshot folder number: 175
+Replay individual number: 285
 
 
-----<<< INITIAL SEED >>>----
+----<<< VISUALIZATION OPTIONS >>>----
+[ ] Analyze planting rates only
+Dimensions per color bin: 6
+
+
+----<<< INITIAL SEED / DEMO >>>----
 Controller: <magenta-controller-cppn.xml>
 Morphology: <magenta-morphology-cppn.xml>
 
 
-----<<< MAIN LOOP OPTIONS >>>----
-[ ] Control 1: everyone can plant
-[ ] Control 2: creatures can't see each other
-
-Name of folder containing run logs and morphologies: <logs>
-Max parent list size: 100
-Max number of genomes generated: 50000
-Minimum creature size: 50 pixels
-
-
-----<<< REPLAY OPTIONS >>>----
-Snapshot folder number: 199
-
-
 ----<<< GENERAL WORLD CONFIGURATION >>>----
-[x] Background generated based on seed morphology
-[ ] Grey striped background
-
-[x] Fixed size world
-Initial world height: 1000 pixels
-Initial world width: 1000 pixels
-
-[x] Color all 4 borders of the world
+[ ] Fixed spawn point at center of world
+Initial background filename: <widebackground.dat>
+Initial world height: 800 pixels
+Initial world width: 1600 pixels
 Color ratio: 15 %
 Border thickness: 30 pixels
 Max time steps: 200
@@ -75,8 +72,14 @@ Required distance from center (this number * max body height): 1.45
 Initial heading (range [-3.14, 3.14]; 0 points north): 0 radians
 Rotation speed: 1 degree(s)
 Movement speed: 300
-Tolerated difference between sensor field contents / body color ratios for planting: 1.0 
+Tolerated difference between sensor field contents / body color ratios for planting: 8.0 
 Texture width (use odd values): 101 pixels 
+
+
+----<<< BEHAVIOR VECTOR WEIGHTS >>>----
+Planting: 1.0
+Position: 1.0
+Heading: 1.0
 
 
 ----<<< SNAPSHOT OPTIONS >>>----
@@ -89,19 +92,7 @@ Background byte file name: <background.dat>
 ----<<< DEFAULT NEAT PARAMETERS >>>----
 Prob. mutate connection weights: 0.988
 Prob. mutate add node: 0.002
+Prob. mutate delete node: 0.002
 Prob. mutate add module: 0.0
 Prob. mutate add connection: 0.02
-Prob. mutate delete connection: 0.001
-
-
-----<<< VISUALIZATION OPTIONS >>>----
-( do not use the red overlay in replay mode or evolution mode )
-[ ] Overlay a red circle on a creature when it is planting
-[ ] Draw the sensor field and its contents onscreen
-
-
-----<<< DEBUG MODE OPTIONS >>>----
-[ ] Dummy morphology with a uniformly distributed color pattern
-[ ] Include overlapping dummy creatures in background (for sensor testing)
-[ ] Print out the sensor inputs and ANN outputs at each timestep to <sensor_contents.txt>
-[ ] Output planting attempt results to the console
+Prob. mutate delete connection: 0.02

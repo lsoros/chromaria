@@ -51,6 +51,7 @@ namespace Chromaria
         public static int numCreaturesPerFolder;
         
         // World options
+        public static bool startFromCenter = false;
         public static bool colorAllFourBorders = true;
         public static bool randomMorphology = false;
         public static bool stripedBackground = false;
@@ -65,6 +66,7 @@ namespace Chromaria
         public static float colorRatio;
         public static int borderThickness;
         public static float initialHeading; // 0.0f -> the creature will start facing north
+        public static string initialBackgroundFilename;
 
         // Novelty search options
         public bool bidirectionalTrials = false;
@@ -85,6 +87,10 @@ namespace Chromaria
         public static bool debugSensorFieldRotation = false;
         public static bool depthTest = false;
         public static bool useRandomMorphology = false;
+        public static int replayIndividualNumber;
+
+        // Visualization options
+        public static int numDimsPerRGBAxis;
 
         // Graphics options
         public static bool trackPlanting = false; // Colors the creature red whenever it attemps to plant
@@ -104,16 +110,26 @@ namespace Chromaria
         public static string logsFolder;
         public static string snapshotFileName;
         public static int snapshotFolderNumber;
+        public static bool loadBackgroundOnly = false;
+        public static bool analyzePlantingRatesOnly = false;
+		public static double pMutConnectionWeight;
+		public static double pAddNode;
+		public static double pDeleteSimpleNeuron;
+		public static double pAddModule;
+		public static double pAddConnection;
+		public static double pDeleteConnection;
 
         public static int maxPopulationListSize;
+		public static int numOffspringAttempts;
         public static int maxTimeSteps; //was 150
         public static int maxNumGenomesGenerated;
         public static bool updateBackground = false;
         public static RotationPacket planterRotationPacket;
 
         // CPPN options
-        public static Dictionary<String, double> controllerCPPNactFuns;
-        public static Dictionary<String, double> morphologyCPPNactFuns;
+		public static Dictionary<String, double> controllerCPPNactFuns;
+		public static Dictionary<String, double> morphologyCPPNactFuns;
+
 
         // Creature options
         public static int ROTATION_SPEED; // Basically, the number of degrees the sprite will rotate if one output is maximized and the other is minimized.
@@ -136,11 +152,9 @@ namespace Chromaria
         public static ControllerSubstrate controllerSubstrate; // HyperNEAT substrate
         public static float nextDepth;
         public static int nextImageID;
+		public static long startTime;
         public static StaticImage initialBackground;
-        public static SpriteFont defaultFont;
-        public static Vector2 textPosition;
-        public static long startTime;
-        public static string replayFolderName;
+        public static StaticImage backgroundImage;
         #endregion 
 
         /// <summary>
@@ -149,10 +163,10 @@ namespace Chromaria
         /// </summary>
         public Simulator()
         {
-            // Initialize the cppn activation function probabilities lists
-            controllerCPPNactFuns = new Dictionary<string, double>(15);
-            morphologyCPPNactFuns = new Dictionary<string, double>(15);
-            
+			// Initialize the cppn activation function probabilities lists
+			controllerCPPNactFuns = new Dictionary<string, double>(15);
+			morphologyCPPNactFuns = new Dictionary<string, double>(15);
+
             // Read the parameters from chromaria-params.txt
             loadParameters();
 
@@ -180,7 +194,7 @@ namespace Chromaria
             {
                 string line, subtoken;
                 String[] splitString;
-                bool readingControllerCPPNprobs = false;
+				bool readingControllerCPPNprobs = false;
                 using (StreamReader sr = new StreamReader("chromaria-params.txt"))
                 {
                     while ((line = sr.ReadLine().Trim()) != null)
@@ -190,10 +204,16 @@ namespace Chromaria
                             // If the line starts with [, it is a boolean parameter
                             if (line.StartsWith("[x]"))
                             {
-                                if(line.Contains("Control 1"))
+                                if (line.Contains("Control 1"))
                                     everyoneCanPlant = true;
-                                else if(line.Contains("Control 2"))
+                                else if (line.Contains("Control 2"))
                                     blindCreatures = true;
+                                else if (line.Contains("load static background only"))
+                                    loadBackgroundOnly = true;
+                                else if (line.Contains("Analyze planting rates only"))
+                                    analyzePlantingRatesOnly = true;
+                                else if (line.Contains("Fixed spawn point at center of world"))
+                                    startFromCenter = true;
                                 else if (line.Contains("Grey striped background"))
                                     stripedBackground = true;
                                 else if (line.Contains("Fixed size world"))
@@ -271,6 +291,13 @@ namespace Chromaria
                                         }
                                     }
                                 }
+                                else if (line.StartsWith("Initial background filename:"))
+                                {
+                                    splitString = line.Split();
+                                    subtoken = splitString[splitString.Length - 1];
+                                    subtoken = subtoken.Remove(0, 1);
+                                    initialBackgroundFilename = subtoken.Remove(subtoken.Length - 1);
+                                }
                                 else if (line.StartsWith("Initial world height:"))
                                 {
                                     splitString = line.Split();
@@ -329,13 +356,18 @@ namespace Chromaria
                                     subtoken = splitString[splitString.Length - 1];
                                     subtoken = subtoken.Remove(0, 1);
                                     subtoken = subtoken.Remove(subtoken.Length - 1);
-                                    replayFolderName = subtoken;
+                                    logsFolder = Directory.GetCurrentDirectory() + "\\" + subtoken + "\\";
                                 }
                                 else if (line.StartsWith("Max parent list size:"))
                                 {
                                     splitString = line.Split();
                                     maxPopulationListSize = Convert.ToInt32(splitString[splitString.Length - 1]);
                                 }
+								else if(line.StartsWith("Number of allowed attempts to generate a viable offspring:"))
+								{
+									splitString = line.Split();
+									numOffspringAttempts = Convert.ToInt32(splitString[splitString.Length - 1]);
+								}
                                 else if (line.StartsWith("Max number of genomes generated:"))
                                 {
                                     splitString = line.Split();
@@ -356,128 +388,126 @@ namespace Chromaria
                                     splitString = line.Split();
                                     morphologyXMLprefix = (splitString[splitString.Length - 1]);
                                 }
-
-                                else if (line.StartsWith("Controller CPPN:"))
-                                {
-                                    readingControllerCPPNprobs = true;
-                                }
-
-                                else if (line.StartsWith("Morphology CPPN:"))
-                                {
-                                    readingControllerCPPNprobs = false;
-                                }
-                                else if (line.StartsWith("Bipolar sigmoid"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("BipolarSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("BipolarSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Error sign"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("ErrorSign", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("ErrorSign", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Gaussian"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("Gaussian", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("Gaussian", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Inverse absolute sigmoid"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("InverseAbsoluteSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("InverseAbsoluteSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Modulus"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("Modulus", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("Modulus", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Null function"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("NullFn", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("NullFn", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Plain sigmoid"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("PlainSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("PlainSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Reduced sigmoid"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("ReducedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("ReducedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Sigmoid approximation"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("SigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("SigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Sign function"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("Sign", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("Sign", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Sine"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("Sine", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("Sine", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Steepened sigmoid"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("SteepenedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("SteepenedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Steepened sigmoid approximation"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("SteepenedSigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("SteepenedSigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
-                                else if (line.StartsWith("Step function"))
-                                {
-                                    splitString = line.Split();
-                                    if (readingControllerCPPNprobs)
-                                        controllerCPPNactFuns.Add("StepFunction", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                    else
-                                        morphologyCPPNactFuns.Add("StepFunction", Convert.ToDouble(splitString[splitString.Length - 2]));
-                                }
+								else if (line.StartsWith("Controller CPPN:"))
+								{
+									readingControllerCPPNprobs = true;
+								}
+								else if (line.StartsWith("Morphology CPPN:"))
+								{
+									readingControllerCPPNprobs = false;
+								}
+								else if (line.StartsWith("Bipolar sigmoid"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("BipolarSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("BipolarSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Error sign"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("ErrorSign", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("ErrorSign", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Gaussian"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("Gaussian", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("Gaussian", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Inverse absolute sigmoid"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("InverseAbsoluteSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("InverseAbsoluteSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Modulus"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("Modulus", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("Modulus", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Null function"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("NullFn", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("NullFn", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Plain sigmoid"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("PlainSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("PlainSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Reduced sigmoid"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("ReducedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("ReducedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Sigmoid approximation"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("SigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("SigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Sign function"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("Sign", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("Sign", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Sine"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("Sine", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("Sine", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Steepened sigmoid"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("SteepenedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("SteepenedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Steepened sigmoid approximation"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("SteepenedSigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("SteepenedSigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
+								else if (line.StartsWith("Step function"))
+								{
+									splitString = line.Split();
+									if (readingControllerCPPNprobs)
+										controllerCPPNactFuns.Add("StepFunction", Convert.ToDouble(splitString[splitString.Length - 2]));
+									else
+										morphologyCPPNactFuns.Add("StepFunction", Convert.ToDouble(splitString[splitString.Length - 2]));
+								}
                                 else if (line.StartsWith("Required distance from center"))
                                 {
                                     splitString = line.Split();
@@ -550,6 +580,46 @@ namespace Chromaria
                                     splitString = line.Split();
                                     snapshotFolderNumber = Convert.ToInt32(splitString[splitString.Length - 1]);
                                 }
+                                else if (line.StartsWith("Replay individual number:"))
+                                {
+                                    splitString = line.Split();
+                                    replayIndividualNumber = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                }
+                                else if (line.StartsWith("Dimensions per color bin:"))
+                                {
+                                    splitString = line.Split();
+                                    numDimsPerRGBAxis = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                }
+								else if (line.StartsWith("Prob. mutate connection weights:"))
+								{
+									splitString = line.Split();
+									pMutConnectionWeight = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
+								else if (line.StartsWith("Prob. mutate add node:"))
+								{
+									splitString = line.Split();
+									pAddNode = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
+								else if (line.StartsWith("Prob. mutate delete node:"))
+								{
+									splitString = line.Split();
+									pDeleteSimpleNeuron = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
+								else if (line.StartsWith("Prob. mutate add module:"))
+								{
+									splitString = line.Split();
+									pAddModule = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
+								else if (line.StartsWith("Prob. mutate add connection:"))
+								{
+									splitString = line.Split();
+									pAddConnection = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
+								else if (line.StartsWith("Prob. mutate delete connection:"))
+								{
+									splitString = line.Split();
+									pDeleteConnection = Convert.ToDouble(splitString[splitString.Length - 1]);
+								}
                             }
                         }
                     }
@@ -570,8 +640,8 @@ namespace Chromaria
         /// </summary>
         protected override void Initialize()
         {
-            // Get the (unique) start time
-            startTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+			// Get the (unique) start time
+			startTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
             // Initialize simulator
             base.Initialize();
@@ -581,12 +651,6 @@ namespace Chromaria
 
             // Set the title of the window
             Window.Title = "Chromaria";
-
-            // Load the pre-compiled font that can be used for on-screen displays
-            defaultFont = Content.Load<SpriteFont>("Vera");
-
-            // Set the on-screen position for drawing the reproduction number
-            textPosition = new Vector2(50, 25);
 
             // Create a new SpriteBatch, which can be used to render textures onscreen
             spriteBatch = new SpriteBatch(GraphicsDevice);
