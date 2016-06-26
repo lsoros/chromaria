@@ -45,6 +45,7 @@ Morphology: <magenta-morphology-cppn.xml>
 
 ----<<< GENERAL WORLD CONFIGURATION >>>----
 [ ] Fixed spawn point at center of world
+[x] Load initial background from file
 Initial background filename: <widebackground.dat>
 Initial world height: 800 pixels
 Initial world width: 1600 pixels

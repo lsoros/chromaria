@@ -54,6 +54,7 @@ namespace Chromaria
         
         // World options
         public static bool startFromCenter = false;
+        public static bool autoGenerateBackground = true;
         public static bool colorAllFourBorders = true;
         public static bool randomMorphology = false;
         public static bool stripedBackground = false;
@@ -216,6 +217,8 @@ namespace Chromaria
                                     analyzePlantingRatesOnly = true;
                                 else if (line.Contains("Fixed spawn point at center of world"))
                                     startFromCenter = true;
+                                else if (line.Contains("Load initial background from file"))
+                                    autoGenerateBackground = false;
                                 else if (line.Contains("Grey striped background"))
                                     stripedBackground = true;
                                 else if (line.Contains("Fixed size world"))

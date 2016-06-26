@@ -297,8 +297,9 @@ namespace Chromaria.Modes
             {
 				if (stripedBackground)
 					backgroundImage = new StaticImage ("Background", 0, 0, generateStripedBackground (true, true, true, true), this);
-				else
-					//backgroundImage = new StaticImage ("Background", 0, 0, generateSeededBackground(initialMorphology, true, true, true, true), this);
+				else if (autoGenerateBackground)
+					backgroundImage = new StaticImage ("Background", 0, 0, generateSeededBackground(initialMorphology, true, true, true, true), this);
+                else
                     backgroundImage = new StaticImage("Background", 0, 0, ReadBackgroundFromFile(initialBackgroundFilename), this);
 
                 WriteBackgroundToFile(logsFolder + snapshotFileName);
