@@ -14,4 +14,4 @@ A typical Chromaria run consists of [novelty search](https://github.com/lsoros/c
 
 Support
 =======
-Questions? Check the wiki, or email Lisa: lsoros at cs.ucf.edu.
+Questions? Check the wiki, or email Lisa: lsoros at champlain.edu.
