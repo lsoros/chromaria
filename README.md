@@ -2,7 +2,7 @@ Chromaria
 =========
 Chromaria is a software platform for artificial life experiments. 
 
-A comprehensive technical paper about Chromaria can be found [here](http://eplex.cs.ucf.edu/publications/2014/chromaria-alife14).
+A comprehensive technical paper about Chromaria can be found [here](http://eplex.cs.ucf.edu/papers/soros_alife14.pdf). A follow-up paper is [here](http://eplex.cs.ucf.edu/papers/soros_alife16.pdf)! More coming soon.
 
 Getting Started
 ===============
