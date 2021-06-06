@@ -12,7 +12,7 @@ using Chromaria.VisibleComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
+//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -198,433 +198,437 @@ namespace Chromaria
                 string line, subtoken;
                 String[] splitString;
 				bool readingControllerCPPNprobs = false;
+
                 using (StreamReader sr = new StreamReader("chromaria-params.txt"))
                 {
-                    while ((line = sr.ReadLine().Trim()) != null)
+                    while (!sr.EndOfStream)
                     {
-                        if(!(line.StartsWith("-") || line.StartsWith("(")))
+                        line = sr.ReadLine().Trim();
                         {
-                            // If the line starts with [, it is a boolean parameter
-                            if (line.StartsWith("[x]"))
+                            if (!(line.StartsWith("-") || line.StartsWith("(")))
                             {
-                                if (line.Contains("Control 1"))
-                                    everyoneCanPlant = true;
-                                else if (line.Contains("Control 2"))
-                                    blindCreatures = true;
-                                else if (line.Contains("load static background only"))
-                                    loadBackgroundOnly = true;
-                                else if (line.Contains("Analyze planting rates only"))
-                                    analyzePlantingRatesOnly = true;
-                                else if (line.Contains("Fixed spawn point at center of world"))
-                                    startFromCenter = true;
-                                else if (line.Contains("Load initial background from file"))
-                                    autoGenerateBackground = false;
-                                else if (line.Contains("Grey striped background"))
-                                    stripedBackground = true;
-                                else if (line.Contains("Fixed size world"))
-                                    fixedSizeWorld = true;
-                                else if (line.Contains("Color all 4 borders of the world"))
-                                    colorAllFourBorders = true;
-                                else if (line.Contains("Bidirectional trials"))
-                                    bidirectionalTrials = true;
-                                else if (line.Contains("Freeze individuals after they attempt to plant"))
-                                    freezeAfterPlanting = true;
-                                else if (line.Contains("Stop novelty search after"))
+                                // If the line starts with [, it is a boolean parameter
+                                if (line.StartsWith("[x]"))
                                 {
-                                    fixedIndividuals = true;
-                                    foreach (String token in line.Split())
+                                    if (line.Contains("Control 1"))
+                                        everyoneCanPlant = true;
+                                    else if (line.Contains("Control 2"))
+                                        blindCreatures = true;
+                                    else if (line.Contains("load static background only"))
+                                        loadBackgroundOnly = true;
+                                    else if (line.Contains("Analyze planting rates only"))
+                                        analyzePlantingRatesOnly = true;
+                                    else if (line.Contains("Fixed spawn point at center of world"))
+                                        startFromCenter = true;
+                                    else if (line.Contains("Load initial background from file"))
+                                        autoGenerateBackground = false;
+                                    else if (line.Contains("Grey striped background"))
+                                        stripedBackground = true;
+                                    else if (line.Contains("Fixed size world"))
+                                        fixedSizeWorld = true;
+                                    else if (line.Contains("Color all 4 borders of the world"))
+                                        colorAllFourBorders = true;
+                                    else if (line.Contains("Bidirectional trials"))
+                                        bidirectionalTrials = true;
+                                    else if (line.Contains("Freeze individuals after they attempt to plant"))
+                                        freezeAfterPlanting = true;
+                                    else if (line.Contains("Stop novelty search after"))
                                     {
-                                        if (token.StartsWith("<"))
+                                        fixedIndividuals = true;
+                                        foreach (String token in line.Split())
                                         {
-                                            subtoken = token.Remove(0, 1);
-                                            subtoken = subtoken.Remove(subtoken.Length - 1);
-                                            numIndividuals = Convert.ToInt32(subtoken);
+                                            if (token.StartsWith("<"))
+                                            {
+                                                subtoken = token.Remove(0, 1);
+                                                subtoken = subtoken.Remove(subtoken.Length - 1);
+                                                numIndividuals = Convert.ToInt32(subtoken);
+                                            }
                                         }
                                     }
-                                }
-                                else if (line.Contains("Use stricter planting function"))
-                                    useHarderPlantingFunction = true;
-                                else if (line.Contains("Overlay a red circle on a creature when it is planting"))
-                                    trackPlanting = true;
-                                else if (line.Contains("Dummy morphology with a uniformly distributed color pattern"))
-                                    useRandomMorphology = true;
-                                else if (line.Contains("Draw the sensor field and its contents onscreen"))
-                                    drawSensorField = true;
-                                else if (line.Contains("Include overlapping dummy creatures in background"))
-                                    depthTest = true;
-                                else if (line.Contains("Print out the sensor inputs and ANN outputs at each timestep to"))
-                                {
-                                    trackPlanting = true;
-                                    foreach (String token in line.Split())
+                                    else if (line.Contains("Use stricter planting function"))
+                                        useHarderPlantingFunction = true;
+                                    else if (line.Contains("Overlay a red circle on a creature when it is planting"))
+                                        trackPlanting = true;
+                                    else if (line.Contains("Dummy morphology with a uniformly distributed color pattern"))
+                                        useRandomMorphology = true;
+                                    else if (line.Contains("Draw the sensor field and its contents onscreen"))
+                                        drawSensorField = true;
+                                    else if (line.Contains("Include overlapping dummy creatures in background"))
+                                        depthTest = true;
+                                    else if (line.Contains("Print out the sensor inputs and ANN outputs at each timestep to"))
                                     {
-                                        if (token.StartsWith("<"))
+                                        trackPlanting = true;
+                                        foreach (String token in line.Split())
                                         {
-                                            subtoken = token.Remove(0, 1);
-                                            subtoken = subtoken.Remove(subtoken.Length - 1);
-                                            debugOutputFile = subtoken;
+                                            if (token.StartsWith("<"))
+                                            {
+                                                subtoken = token.Remove(0, 1);
+                                                subtoken = subtoken.Remove(subtoken.Length - 1);
+                                                debugOutputFile = subtoken;
+                                            }
                                         }
                                     }
+                                    else if (line.Contains("Output planting attempt results to the console"))
+                                        outputPlantingSuccess = true;
                                 }
-                                else if (line.Contains("Output planting attempt results to the console"))
-                                    outputPlantingSuccess = true;
-                            }
 
-                            // Otherwise, it is a valued parameter following from a : separator
-                            else
-                            {
-                                if (line.StartsWith("Controller:"))
+                                // Otherwise, it is a valued parameter following from a : separator
+                                else
                                 {
-                                    foreach (String token in line.Split())
+                                    if (line.StartsWith("Controller:"))
                                     {
-                                        if (token.StartsWith("<"))
+                                        foreach (String token in line.Split())
                                         {
-                                            subtoken = token.Remove(0, 1);
-                                            subtoken = subtoken.Remove(subtoken.Length-1);
-                                            initialControllerFilename = Path.Combine("Seeds",subtoken);
+                                            if (token.StartsWith("<"))
+                                            {
+                                                subtoken = token.Remove(0, 1);
+                                                subtoken = subtoken.Remove(subtoken.Length - 1);
+                                                initialControllerFilename = Path.Combine("Seeds", subtoken);
+                                            }
                                         }
                                     }
-                                }
-                                else if (line.StartsWith("Morphology:"))
-                                {
-                                    foreach (String token in line.Split())
+                                    else if (line.StartsWith("Morphology:"))
                                     {
-                                        if (token.StartsWith("<"))
+                                        foreach (String token in line.Split())
                                         {
-                                            subtoken = token.Remove(0, 1);
-                                            subtoken = subtoken.Remove(subtoken.Length - 1);
-                                            initialMorphologyFilename = Path.Combine("Seeds",subtoken);
+                                            if (token.StartsWith("<"))
+                                            {
+                                                subtoken = token.Remove(0, 1);
+                                                subtoken = subtoken.Remove(subtoken.Length - 1);
+                                                initialMorphologyFilename = Path.Combine("Seeds", subtoken);
+                                            }
                                         }
                                     }
+                                    else if (line.StartsWith("Initial background filename:"))
+                                    {
+                                        splitString = line.Split();
+                                        subtoken = splitString[splitString.Length - 1];
+                                        subtoken = subtoken.Remove(0, 1);
+                                        initialBackgroundFilename = Path.Combine("Backgrounds", subtoken.Remove(subtoken.Length - 1));
+                                    }
+                                    else if (line.StartsWith("Initial world height:"))
+                                    {
+                                        splitString = line.Split();
+                                        initialBoardHeight = Convert.ToInt32(splitString[splitString.Length - 2]);
+                                        regionHeight = initialBoardHeight;
+                                    }
+                                    else if (line.StartsWith("Initial world width:"))
+                                    {
+                                        splitString = line.Split();
+                                        initialBoardWidth = Convert.ToInt32(splitString[splitString.Length - 2]);
+                                        regionWidth = initialBoardWidth;
+                                    }
+                                    else if (line.StartsWith("Region height:"))
+                                    {
+                                        splitString = line.Split();
+                                        regionHeight = Convert.ToInt32(splitString[splitString.Length - 2]);
+                                    }
+                                    else if (line.StartsWith("Region width:"))
+                                    {
+                                        splitString = line.Split();
+                                        regionWidth = Convert.ToInt32(splitString[splitString.Length - 2]);
+                                    }
+                                    else if (line.StartsWith("Color ratio:"))
+                                    {
+                                        splitString = line.Split();
+                                        colorRatio = (float)Convert.ToDouble("0." + splitString[splitString.Length - 2]);
+                                    }
+                                    else if (line.StartsWith("Border thickness:"))
+                                    {
+                                        splitString = line.Split();
+                                        borderThickness = Convert.ToInt32(splitString[splitString.Length - 2]);
+                                    }
+                                    else if (line.StartsWith("Max time steps:"))
+                                    {
+                                        splitString = line.Split();
+                                        maxTimeSteps = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Behavior vector update interval:"))
+                                    {
+                                        splitString = line.Split();
+                                        behaviorUpdateInterval = Convert.ToInt32(splitString[splitString.Length - 2]);
+                                    }
+                                    else if (line.StartsWith("Population size:"))
+                                    {
+                                        splitString = line.Split();
+                                        populationSize = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Archive threshold:"))
+                                    {
+                                        splitString = line.Split();
+                                        archiveThreshold = Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Name of folder containing run logs and morphologies:"))
+                                    {
+                                        splitString = line.Split();
+                                        subtoken = splitString[splitString.Length - 1];
+                                        subtoken = subtoken.Remove(0, 1);
+                                        subtoken = subtoken.Remove(subtoken.Length - 1);
+                                        logsFolder = Directory.GetCurrentDirectory() + "\\" + subtoken + "\\";
+                                    }
+                                    else if (line.StartsWith("Max parent list size:"))
+                                    {
+                                        splitString = line.Split();
+                                        maxPopulationListSize = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Number of allowed attempts to generate a viable offspring:"))
+                                    {
+                                        splitString = line.Split();
+                                        numOffspringAttempts = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Max number of genomes generated:"))
+                                    {
+                                        splitString = line.Split();
+                                        maxNumGenomesGenerated = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Minimum creature size:"))
+                                    {
+                                        splitString = line.Split();
+                                        minCreatureSize = Convert.ToInt32(splitString[splitString.Length - 2]);
+                                    }
+                                    else if (line.StartsWith("Controller genome prefix:"))
+                                    {
+                                        splitString = line.Split();
+                                        controllerXMLprefix = (splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Morphology genome prefix:"))
+                                    {
+                                        splitString = line.Split();
+                                        morphologyXMLprefix = (splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Controller CPPN:"))
+                                    {
+                                        readingControllerCPPNprobs = true;
+                                    }
+                                    else if (line.StartsWith("Morphology CPPN:"))
+                                    {
+                                        readingControllerCPPNprobs = false;
+                                    }
+                                    else if (line.StartsWith("Bipolar sigmoid"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("BipolarSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("BipolarSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Error sign"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("ErrorSign", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("ErrorSign", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Gaussian"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("Gaussian", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("Gaussian", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Inverse absolute sigmoid"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("InverseAbsoluteSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("InverseAbsoluteSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Modulus"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("Modulus", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("Modulus", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Null function"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("NullFn", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("NullFn", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Plain sigmoid"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("PlainSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("PlainSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Reduced sigmoid"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("ReducedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("ReducedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Sigmoid approximation"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("SigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("SigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Sign function"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("Sign", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("Sign", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Sine"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("Sine", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("Sine", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Steepened sigmoid"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("SteepenedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("SteepenedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Steepened sigmoid approximation"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("SteepenedSigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("SteepenedSigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Step function"))
+                                    {
+                                        splitString = line.Split();
+                                        if (readingControllerCPPNprobs)
+                                            controllerCPPNactFuns.Add("StepFunction", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                        else
+                                            morphologyCPPNactFuns.Add("StepFunction", Convert.ToDouble(splitString[splitString.Length - 2]));
+                                    }
+                                    else if (line.StartsWith("Required distance from center"))
+                                    {
+                                        splitString = line.Split();
+                                        harderPlantingFunctionMultiplier = (float)Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Initial heading"))
+                                    {
+                                        splitString = line.Split();
+                                        initialHeading = (float)Convert.ToDouble(splitString[splitString.Length - 2]);
+                                    }
+                                    else if (line.StartsWith("Rotation speed:"))
+                                    {
+                                        splitString = line.Split();
+                                        ROTATION_SPEED = Convert.ToInt32(splitString[splitString.Length - 2]);
+                                    }
+                                    else if (line.StartsWith("Movement speed:"))
+                                    {
+                                        splitString = line.Split();
+                                        MOVEMENT_SPEED = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Number of sides on the sensor field"))
+                                    {
+                                        splitString = line.Split();
+                                        defaultNumSegments = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Sensors per side:"))
+                                    {
+                                        splitString = line.Split();
+                                        defaultNumSensors = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Tolerated difference between sensor field contents"))
+                                    {
+                                        splitString = line.Split();
+                                        toleratedDifference = Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Texture width"))
+                                    {
+                                        splitString = line.Split();
+                                        pixelHeight = Convert.ToInt32(splitString[splitString.Length - 2]);
+                                    }
+                                    else if (line.StartsWith("Planting:"))
+                                    {
+                                        splitString = line.Split();
+                                        plantingWeight = Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Position:"))
+                                    {
+                                        splitString = line.Split();
+                                        positionWeight = Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Heading:"))
+                                    {
+                                        splitString = line.Split();
+                                        headingWeight = Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Number of creatures per folder:"))
+                                    {
+                                        splitString = line.Split();
+                                        numCreaturesPerFolder = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Background byte file name:"))
+                                    {
+                                        splitString = line.Split();
+                                        subtoken = splitString[splitString.Length - 1];
+                                        subtoken = subtoken.Remove(0, 1);
+                                        snapshotFileName = subtoken.Remove(subtoken.Length - 1);
+                                    }
+                                    else if (line.StartsWith("Snapshot folder number:"))
+                                    {
+                                        splitString = line.Split();
+                                        snapshotFolderNumber = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Replay individual number:"))
+                                    {
+                                        splitString = line.Split();
+                                        replayIndividualNumber = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Dimensions per color bin:"))
+                                    {
+                                        splitString = line.Split();
+                                        numDimsPerRGBAxis = Convert.ToInt32(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Prob. mutate connection weights:"))
+                                    {
+                                        splitString = line.Split();
+                                        pMutConnectionWeight = Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Prob. mutate add node:"))
+                                    {
+                                        splitString = line.Split();
+                                        pAddNode = Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Prob. mutate delete node:"))
+                                    {
+                                        splitString = line.Split();
+                                        pDeleteSimpleNeuron = Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Prob. mutate add module:"))
+                                    {
+                                        splitString = line.Split();
+                                        pAddModule = Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Prob. mutate add connection:"))
+                                    {
+                                        splitString = line.Split();
+                                        pAddConnection = Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
+                                    else if (line.StartsWith("Prob. mutate delete connection:"))
+                                    {
+                                        splitString = line.Split();
+                                        pDeleteConnection = Convert.ToDouble(splitString[splitString.Length - 1]);
+                                    }
                                 }
-                                else if (line.StartsWith("Initial background filename:"))
-                                {
-                                    splitString = line.Split();
-                                    subtoken = splitString[splitString.Length - 1];
-                                    subtoken = subtoken.Remove(0, 1);
-                                    initialBackgroundFilename = Path.Combine("Backgrounds",subtoken.Remove(subtoken.Length - 1));
-                                }
-                                else if (line.StartsWith("Initial world height:"))
-                                {
-                                    splitString = line.Split();
-                                    initialBoardHeight = Convert.ToInt32(splitString[splitString.Length - 2]);
-                                    regionHeight = initialBoardHeight;
-                                }
-                                else if (line.StartsWith("Initial world width:"))
-                                {
-                                    splitString = line.Split();
-                                    initialBoardWidth = Convert.ToInt32(splitString[splitString.Length - 2]);
-                                    regionWidth = initialBoardWidth;
-                                }
-                                else if (line.StartsWith("Region height:"))
-                                {
-                                    splitString = line.Split();
-                                    regionHeight = Convert.ToInt32(splitString[splitString.Length - 2]);
-                                }
-                                else if (line.StartsWith("Region width:"))
-                                {
-                                    splitString = line.Split();
-                                    regionWidth = Convert.ToInt32(splitString[splitString.Length - 2]);
-                                }
-                                else if (line.StartsWith("Color ratio:"))
-                                {
-                                    splitString = line.Split();
-                                    colorRatio = (float)Convert.ToDouble("0." + splitString[splitString.Length - 2]);
-                                }
-                                else if (line.StartsWith("Border thickness:"))
-                                {
-                                    splitString = line.Split();
-                                    borderThickness = Convert.ToInt32(splitString[splitString.Length - 2]);
-                                }
-                                else if (line.StartsWith("Max time steps:"))
-                                {
-                                    splitString = line.Split();
-                                    maxTimeSteps = Convert.ToInt32(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Behavior vector update interval:"))
-                                {
-                                    splitString = line.Split();
-                                    behaviorUpdateInterval = Convert.ToInt32(splitString[splitString.Length - 2]);
-                                }
-                                else if (line.StartsWith("Population size:"))
-                                {
-                                    splitString = line.Split();
-                                    populationSize = Convert.ToInt32(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Archive threshold:"))
-                                {
-                                    splitString = line.Split();
-                                    archiveThreshold = Convert.ToDouble(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Name of folder containing run logs and morphologies:"))
-                                {
-                                    splitString = line.Split();
-                                    subtoken = splitString[splitString.Length - 1];
-                                    subtoken = subtoken.Remove(0, 1);
-                                    subtoken = subtoken.Remove(subtoken.Length - 1);
-                                    logsFolder = Directory.GetCurrentDirectory() + "\\" + subtoken + "\\";
-                                }
-                                else if (line.StartsWith("Max parent list size:"))
-                                {
-                                    splitString = line.Split();
-                                    maxPopulationListSize = Convert.ToInt32(splitString[splitString.Length - 1]);
-                                }
-								else if(line.StartsWith("Number of allowed attempts to generate a viable offspring:"))
-								{
-									splitString = line.Split();
-									numOffspringAttempts = Convert.ToInt32(splitString[splitString.Length - 1]);
-								}
-                                else if (line.StartsWith("Max number of genomes generated:"))
-                                {
-                                    splitString = line.Split();
-                                    maxNumGenomesGenerated = Convert.ToInt32(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Minimum creature size:"))
-                                {
-                                    splitString = line.Split();
-                                    minCreatureSize = Convert.ToInt32(splitString[splitString.Length - 2]);
-                                }
-                                else if (line.StartsWith("Controller genome prefix:"))
-                                {
-                                    splitString = line.Split();
-                                    controllerXMLprefix = (splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Morphology genome prefix:"))
-                                {
-                                    splitString = line.Split();
-                                    morphologyXMLprefix = (splitString[splitString.Length - 1]);
-                                }
-								else if (line.StartsWith("Controller CPPN:"))
-								{
-									readingControllerCPPNprobs = true;
-								}
-								else if (line.StartsWith("Morphology CPPN:"))
-								{
-									readingControllerCPPNprobs = false;
-								}
-								else if (line.StartsWith("Bipolar sigmoid"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("BipolarSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("BipolarSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Error sign"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("ErrorSign", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("ErrorSign", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Gaussian"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("Gaussian", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("Gaussian", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Inverse absolute sigmoid"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("InverseAbsoluteSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("InverseAbsoluteSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Modulus"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("Modulus", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("Modulus", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Null function"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("NullFn", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("NullFn", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Plain sigmoid"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("PlainSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("PlainSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Reduced sigmoid"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("ReducedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("ReducedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Sigmoid approximation"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("SigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("SigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Sign function"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("Sign", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("Sign", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Sine"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("Sine", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("Sine", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Steepened sigmoid"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("SteepenedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("SteepenedSigmoid", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Steepened sigmoid approximation"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("SteepenedSigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("SteepenedSigmoidApproximation", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-								else if (line.StartsWith("Step function"))
-								{
-									splitString = line.Split();
-									if (readingControllerCPPNprobs)
-										controllerCPPNactFuns.Add("StepFunction", Convert.ToDouble(splitString[splitString.Length - 2]));
-									else
-										morphologyCPPNactFuns.Add("StepFunction", Convert.ToDouble(splitString[splitString.Length - 2]));
-								}
-                                else if (line.StartsWith("Required distance from center"))
-                                {
-                                    splitString = line.Split();
-                                    harderPlantingFunctionMultiplier = (float)Convert.ToDouble(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Initial heading"))
-                                {
-                                    splitString = line.Split();
-                                    initialHeading = (float)Convert.ToDouble(splitString[splitString.Length - 2]);
-                                }
-                                else if (line.StartsWith("Rotation speed:"))
-                                {
-                                    splitString = line.Split();
-                                    ROTATION_SPEED = Convert.ToInt32(splitString[splitString.Length - 2]);
-                                }
-                                else if (line.StartsWith("Movement speed:"))
-                                {
-                                    splitString = line.Split();
-                                    MOVEMENT_SPEED = Convert.ToInt32(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Number of sides on the sensor field"))
-                                {
-                                    splitString = line.Split();
-                                    defaultNumSegments = Convert.ToInt32(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Sensors per side:"))
-                                {
-                                    splitString = line.Split();
-                                    defaultNumSensors = Convert.ToInt32(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Tolerated difference between sensor field contents"))
-                                {
-                                    splitString = line.Split();
-                                    toleratedDifference = Convert.ToDouble(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Texture width"))
-                                {
-                                    splitString = line.Split();
-                                    pixelHeight = Convert.ToInt32(splitString[splitString.Length - 2]);
-                                }
-                                else if (line.StartsWith("Planting:"))
-                                {
-                                    splitString = line.Split();
-                                    plantingWeight = Convert.ToDouble(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Position:"))
-                                {
-                                    splitString = line.Split();
-                                    positionWeight = Convert.ToDouble(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Heading:"))
-                                {
-                                    splitString = line.Split();
-                                    headingWeight = Convert.ToDouble(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Number of creatures per folder:"))
-                                {
-                                    splitString = line.Split();
-                                    numCreaturesPerFolder = Convert.ToInt32(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Background byte file name:"))
-                                {
-                                    splitString = line.Split();
-                                    subtoken = splitString[splitString.Length - 1];
-                                    subtoken = subtoken.Remove(0, 1);
-                                    snapshotFileName = subtoken.Remove(subtoken.Length - 1);
-                                }
-                                else if (line.StartsWith("Snapshot folder number:"))
-                                {
-                                    splitString = line.Split();
-                                    snapshotFolderNumber = Convert.ToInt32(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Replay individual number:"))
-                                {
-                                    splitString = line.Split();
-                                    replayIndividualNumber = Convert.ToInt32(splitString[splitString.Length - 1]);
-                                }
-                                else if (line.StartsWith("Dimensions per color bin:"))
-                                {
-                                    splitString = line.Split();
-                                    numDimsPerRGBAxis = Convert.ToInt32(splitString[splitString.Length - 1]);
-                                }
-								else if (line.StartsWith("Prob. mutate connection weights:"))
-								{
-									splitString = line.Split();
-									pMutConnectionWeight = Convert.ToDouble(splitString[splitString.Length - 1]);
-								}
-								else if (line.StartsWith("Prob. mutate add node:"))
-								{
-									splitString = line.Split();
-									pAddNode = Convert.ToDouble(splitString[splitString.Length - 1]);
-								}
-								else if (line.StartsWith("Prob. mutate delete node:"))
-								{
-									splitString = line.Split();
-									pDeleteSimpleNeuron = Convert.ToDouble(splitString[splitString.Length - 1]);
-								}
-								else if (line.StartsWith("Prob. mutate add module:"))
-								{
-									splitString = line.Split();
-									pAddModule = Convert.ToDouble(splitString[splitString.Length - 1]);
-								}
-								else if (line.StartsWith("Prob. mutate add connection:"))
-								{
-									splitString = line.Split();
-									pAddConnection = Convert.ToDouble(splitString[splitString.Length - 1]);
-								}
-								else if (line.StartsWith("Prob. mutate delete connection:"))
-								{
-									splitString = line.Split();
-									pDeleteConnection = Convert.ToDouble(splitString[splitString.Length - 1]);
-								}
                             }
                         }
                     }
