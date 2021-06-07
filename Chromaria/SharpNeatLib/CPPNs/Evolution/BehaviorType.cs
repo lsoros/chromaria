@@ -29,20 +29,52 @@ namespace Chromaria.SharpNeatLib
         {
            double behavioralDistance = 0.0;
 
-           if (v1 != null && v2 != null)
-           {
-               // Loop through each triple in the behavior vector
-               for (int k = 0; k < v1.behaviorList.Count; k += 4)
-               {
-                   // Position component
-                   behavioralDistance += Chromaria.Simulator.positionWeight * Scale(EuclideanDistance(v1.behaviorList[k], v1.behaviorList[k + 1], v2.behaviorList[k], v2.behaviorList[k + 1]), 0.0, Chromaria.Simulator.maxDistance, 0.0, 1.0);
+            if (v1 != null && v2 != null)
+            {
+                double lastPositionX = 0.0;
+                double lastPositionY = 0.0;
+                double lastHeading = 0.0;
+                double lastPlanting = 0.0;
 
-                   // Heading component
-                   behavioralDistance += Chromaria.Simulator.headingWeight * Math.Abs(Scale(v1.behaviorList[k + 3], -Math.PI, Math.PI, 0.0, 1.0) - Scale(v2.behaviorList[k + 3], -Math.PI, Math.PI, 0.0, 1.0));
+                if (v1.behaviorList.Count < v2.behaviorList.Count){
+                    BehaviorType v1Copy = v1;
+                    v1 = v2;
+                    v2 = v1Copy;
+                }
 
-                   // Planting component
-                   behavioralDistance += Chromaria.Simulator.plantingWeight * (Math.Abs(v1.behaviorList[k + 2] - v2.behaviorList[k + 2]));
-               }
+                // Loop through each triple in the behavior vector
+                for (int k = 0; k < v1.behaviorList.Count; k += 4)
+                {
+                    if (v2.behaviorList.Count > k) { 
+                        // Position component
+                        behavioralDistance += Chromaria.Simulator.positionWeight * Scale(EuclideanDistance(v1.behaviorList[k], v1.behaviorList[k + 1], v2.behaviorList[k], v2.behaviorList[k + 1]), 0.0, Chromaria.Simulator.maxDistance, 0.0, 1.0);
+                        lastPositionX = v2.behaviorList[k];
+                        lastPositionY = v2.behaviorList[k + 1];
+
+                        // Heading component
+                        behavioralDistance += Chromaria.Simulator.headingWeight * Math.Abs(Scale(v1.behaviorList[k + 3], -Math.PI, Math.PI, 0.0, 1.0) - Scale(v2.behaviorList[k + 3], -Math.PI, Math.PI, 0.0, 1.0));
+                        lastHeading = v2.behaviorList[k + 2];
+
+                        // Planting component
+                        behavioralDistance += Chromaria.Simulator.plantingWeight * (Math.Abs(v1.behaviorList[k + 2] - v2.behaviorList[k + 2]));
+                        lastPlanting = v2.behaviorList[k + 3];
+
+                    } else
+                    {
+                        // Position component
+                        behavioralDistance += Chromaria.Simulator.positionWeight * Scale(EuclideanDistance(v1.behaviorList[k], v1.behaviorList[k + 1], lastPositionX, lastPositionY), 0.0, Chromaria.Simulator.maxDistance, 0.0, 1.0);
+
+                        // Heading component
+                        behavioralDistance += Chromaria.Simulator.headingWeight * Math.Abs(Scale(v1.behaviorList[k + 3], -Math.PI, Math.PI, 0.0, 1.0) - Scale(lastHeading, -Math.PI, Math.PI, 0.0, 1.0));
+
+                        // Planting component
+                        behavioralDistance += Chromaria.Simulator.plantingWeight * (Math.Abs(v1.behaviorList[k + 2] - lastPlanting));
+
+
+
+
+                    }
+                }
            }
            return behavioralDistance;
         }
